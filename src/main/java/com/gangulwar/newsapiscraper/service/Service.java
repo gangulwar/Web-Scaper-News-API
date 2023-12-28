@@ -16,7 +16,7 @@ public class Service {
 
         List<NewsModal> list = scraper.newsFromHindustanTimes();
         if (list != null) {
-            Response response = new Response("News from hindustan times", list);
+            Response response = new Response("Top Headlines from Hindustan Times", list);
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } else {
