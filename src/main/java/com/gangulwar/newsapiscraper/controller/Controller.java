@@ -4,11 +4,9 @@ import com.gangulwar.newsapiscraper.response.Response;
 import com.gangulwar.newsapiscraper.service.Service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/get")
 public class Controller {
 
     private Service service=new Service();
