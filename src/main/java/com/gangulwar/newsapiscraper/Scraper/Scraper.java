@@ -14,78 +14,63 @@ public class Scraper {
 
     private static final String HindustanTimes = "https://www.hindustantimes.com/";
     private static final String TimesOfIndia = "https://timesofindia.indiatimes.com/";
-    //    Indian Express Limited
     private static final String IndianExpressLimited = "https://indianexpress.com/";
 
-    public static void main(String[] args) {
-        //Scanner scanner = new Scanner(System.in);
-        int count = 0;
-        //while (true) {
-        //System.out.println("Enter url of product:");
-        //String url = scanner.next();
+
+    public List<NewsModal> newsFromHindustanTimes() {
+
+        List<NewsModal> newsModalList = new ArrayList<>();
+
         try {
-            Document document = Jsoup.connect(HindustanTimes).get();
-            System.out.println("Title :" + document.title());
-            Elements aElement = document.select("h3.hdg3 a");
+            Document doc = Jsoup.connect(HindustanTimes).get();
 
-            for (Element h3Element : aElement) {
-                count++;
-                String textContent = h3Element.text().trim();
-                System.out.println(count + ":" + textContent);
+            Elements divs = doc.select("div.htImpressionTracking");
 
-                String hrefValue = h3Element.attr("href");
-//                System.out.println("href attribute value: " + HindustanTimes + hrefValue.replaceFirst("/", ""));
-//                System.out.println("---");
-                getImageUrl(HindustanTimes + hrefValue.replaceFirst("/", ""));
+            for (Element div : divs) {
 
+                NewsModal newsModal = new NewsModal();
+
+                // Extracting the title
+                Element titleElement = div.selectFirst("h2.hdg3 a");
+
+                String title = null;
+                if (titleElement != null) {
+                    title = titleElement.text();
+                    newsModal.setTitle(title);
+                } else {
+                    continue;
+                }
+
+                // Extracting the url
+                String url = HindustanTimes + div.select("h2.hdg3 a").attr("href");
+                newsModal.setUrl(url);
+
+                // Extracting the publication time
+                Element timeElement = div.select("div.dateTime").first();
+                String time = timeElement != null ? timeElement.text().replace("Published on ", "") : div.select("div.dateTime").text().replace("Published on ", "");
+                newsModal.setPublishedOn(time);
+
+                // Extracting the story description
+                String description = div.select("h2.sortDec").text();
+                newsModal.setDescription(description);
+
+                // Extracting the image URL
+                String imageUrl = div.select("figure img").attr("src");
+                newsModal.setImageUrl(imageUrl);
+
+                // Extracting the author
+                Element authorElement = div.select("div.storyBy small.byLineAuthor a").first();
+                String author = authorElement != null ? authorElement.text() : div.select("div.storyBy small.byLineAuthor a").text();
+                newsModal.setAuthor(author);
+
+                newsModalList.add(newsModal);
             }
-        } catch (IOException exception) {
-            System.out.println("Error!");
-            exception.printStackTrace();
+
+
+        } catch (IOException ioException) {
+            System.out.println("Couldn't connect to hindustan times");
         }
 
-
+        return newsModalList;
     }
-
-    public static List<String> getLatestNews() throws Exception {
-        ArrayList<String> lists = new ArrayList<>();
-        Document hindustanTimes = Jsoup.connect(HindustanTimes).get();
-        Elements aElement = hindustanTimes.select("h3.hdg3 a");
-
-        for (Element h3Element : aElement) {
-            //count++;
-            NewsModal newsModal = new NewsModal();
-            String textContent = h3Element.text().trim();
-//            System.out.println(count + ":" + textContent);
-            newsModal.setTitle(textContent);
-            String hrefValue = h3Element.attr("href");
-//            System.out.println("href attribute value: " + HindustanTimes + hrefValue.replaceFirst("/", ""));
-//            System.out.println("---");
-
-        }
-        return null;
-    }
-
-    private static String getImageUrl(String url) {
-
-        try {
-            Document document = Jsoup.parse(url);
-
-            // Select the 'img' element inside the 'picture' element
-            Element imgElement = document.select("div.storyParagraphFigure picture img").first();
-
-            // Get the value of the 'src' attribute (URL of the image)
-            String imageUrl = imgElement.attr("src");
-
-            System.out.println("URL of the image: " + imageUrl);
-
-            return imageUrl;
-        } catch (Exception e) {
-            System.out.println("IOException");
-        }
-
-        return null;
-    }
-
-
 }

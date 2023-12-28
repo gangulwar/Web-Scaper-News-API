@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 public class Response {
@@ -16,5 +18,5 @@ public class Response {
 
     @Getter
     @Setter
-    NewsModal modal;
+    List<NewsModal> newsModalList;
 }

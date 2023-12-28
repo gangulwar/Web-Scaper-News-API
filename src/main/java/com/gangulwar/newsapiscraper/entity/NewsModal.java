@@ -15,9 +15,21 @@ public class NewsModal {
 
     @Getter
     @Setter
+    String publishedOn;
+
+    @Getter
+    @Setter
+    String description;
+
+    @Getter
+    @Setter
+    String url;
+
+    @Getter
+    @Setter
     String imageUrl;
 
     @Getter
     @Setter
-    String source;
+    String author;
 }
